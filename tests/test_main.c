@@ -5,11 +5,13 @@
 #include <cmocka.h>
 
 #include "core/test_account.c"
+#include "crypto/test_sign.c"
 
 int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_account_create),
         cmocka_unit_test(test_account_import),
+        cmocka_unit_test(test_sign)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
