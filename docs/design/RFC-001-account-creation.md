@@ -1,5 +1,5 @@
 # RFC-001: Account Creation Model
-## Status: `Draft`
+## Status: `Implemented`
 ## Motivation
 Account creation is a core operation of the messenger and defines:
 - user identity model
