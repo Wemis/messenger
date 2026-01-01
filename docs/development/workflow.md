@@ -34,9 +34,9 @@ RFC lifecycle:
 - Implemented
 - Rejected
 
-RFCs are stored in <a href="https://github.com/Wemis/messenger/tree/master/docs/design">docs/rfc</a>.
+RFCs are stored in <a href="https://github.com/Wemis/messenger/tree/master/docs/rfc">docs/rfc</a>.
 ## Commit Rules
-*Commit rules is available here* <a href=""https://github.com/Wemis/messenger/blob/master/docs/development/commits.md>commits.md</a>
+*Commit rules is available here* <a href="https://github.com/Wemis/messenger/blob/master/docs/development/commits.md">commits.md</a>
 ## Pull Requests
 PR requirements:
 - Clear description of changes

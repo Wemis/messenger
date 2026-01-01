@@ -31,6 +31,7 @@ Used when:
 - commits doesn't contain business logic
 - temporary commits
 - less valuable commits
+
 Examples:
 - `Fix typo`
 - `Reformat files`
