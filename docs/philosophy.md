@@ -9,9 +9,6 @@ All trust is established exclusively through cryptography.
 The primary goal of the project is to provide secure, verifiable,
 and transparent communication without relying on centralized trust
 assumptions.
-
----
-
 ## Zero-Trust Model
 
 The system follows a strict zero-trust philosophy:
@@ -23,9 +20,6 @@ The system follows a strict zero-trust philosophy:
 
 Every security guarantee must be enforceable and verifiable
 cryptographically, not socially or institutionally.
-
----
-
 ## Cryptography as the Root of Trust
 
 All identity and authentication in the system are derived from a
@@ -42,9 +36,6 @@ An account is a cryptographic identity, not a record in a database.
 
 Loss of the master key implies loss of the account.
 There is no account recovery by design.
-
----
-
 ## End-to-End Encryption
 
 All user data is protected with guaranteed end-to-end encryption.
@@ -55,9 +46,6 @@ All user data is protected with guaranteed end-to-end encryption.
 - Encryption keys never leave the client
 
 The server operates solely on encrypted data.
-
----
-
 ## Server Role
 
 Servers are centralized but intentionally **untrusted**.
@@ -74,9 +62,6 @@ The server:
 - cannot decrypt stored data
 
 Compromise of the server does not compromise message confidentiality.
-
----
-
 ## Metadata Minimization
 
 The system is designed to avoid collection of unnecessary metadata.
@@ -88,9 +73,6 @@ The server does not:
 
 Any metadata required for operation is minimized by design and
 treated as a potential attack surface.
-
----
-
 ## Verifiable Identity and Key Authenticity
 
 Usernames are not arbitrary identifiers.
@@ -106,9 +88,6 @@ This design prevents:
 
 Trust in a peer is established through cryptographic verification,
 not server assertions.
-
----
-
 ## Transparency and Simplicity
 
 The entire system is implemented in **pure C**:
@@ -124,9 +103,6 @@ This choice is intentional and driven by the following goals:
 - precise control over memory and execution
 
 The codebase favors explicitness over convenience.
-
----
-
 ## Performance as a Design Constraint
 
 High performance is not an afterthought.
@@ -138,9 +114,6 @@ The system is designed with:
 
 Performance considerations must not weaken security guarantees,
 but inefficiency is treated as a form of technical debt.
-
----
-
 ## Design Trade-offs
 
 This philosophy intentionally accepts certain trade-offs:
@@ -152,9 +125,6 @@ This philosophy intentionally accepts certain trade-offs:
 
 These trade-offs are considered acceptable and necessary to uphold
 the system’s security model.
-
----
-
 ## Guiding Principle
 
 > If a security property cannot be enforced cryptographically,
