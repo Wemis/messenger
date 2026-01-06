@@ -45,6 +45,9 @@ RFCs should describe:
 - alternatives considered
 - security implications
 
+Please review RFC template:
+- [docs/RFC/RFC-Template](docs/RFC/RFC-Template)
+
 Implementation should only begin after the RFC is accepted.
 ## Development Workflow
 All changes must follow the documented workflow:
