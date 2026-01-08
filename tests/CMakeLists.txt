@@ -15,3 +15,7 @@ add_messenger_test(
     test_account_create
     core/test_account_create.c
 )
+add_messenger_test(
+    test_account_import
+    core/test_account_import.c
+)
