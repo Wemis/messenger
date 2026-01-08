@@ -277,6 +277,10 @@ result_t account_username_verify_authenticity(const char *username, const uint8_
 }
 
 result_t account_verify(User *u) {
+    if (account_username_verify_authenticity(u->username, u->user_id) != OK) {
+        return CORE_ACCOUNT_FORGED;
+    }
+
     uint8_t buffer[512] = {0};
     uint8_t hash[signature_BYTES];
     int offest = 0;
@@ -295,7 +299,7 @@ result_t account_verify(User *u) {
     cryptohash(hash, buffer, offest);
 
     if (crypto_sign_verify(u->signature, hash, hash_BYTES, u->pk_signature) == CRYPTO_INVALID_SIGNATURE) {
-        return CORE_ACCOUNT_INVALID;
+        return CORE_ACCOUNT_FORGED;
     }
 
     return OK;

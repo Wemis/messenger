@@ -93,7 +93,7 @@ static void test_account_verify() {
     result_t res2 = account_verify(&u_invalid);
 
     assert_int_equal(res1, OK);
-    assert_int_equal(res2, CORE_ACCOUNT_INVALID);
+    assert_int_equal(res2, CORE_ACCOUNT_FORGED);
 }
 
 static void test_account_username_verify_integrity() {
