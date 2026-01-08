@@ -61,10 +61,58 @@ static void test_account_create_name_too_long() {
     assert_int_equal(r, CORE_ACCOUNT_NAME_TOO_LONG);
 }
 
+static void test_account_create_empty_name() {
+    User u = {0};
+
+    const char *name = "";
+    const char *prefix = "bob";
+
+    result_t r = account_create(&u, name, prefix);
+
+    assert_int_equal(r, CORE_ACCOUNT_NAME_EMPTY);
+}
+
+static void test_account_create_prefix_too_long() {
+    User u = {0};
+
+    const char *name = "Bob";
+    const char *prefix = "norenfuonoiewfnoifew";
+
+    result_t r = account_create(&u, name, prefix);
+
+    assert_int_equal(r, CORE_ACCOUNT_PREFIX_TOO_LONG);
+}
+
+static void test_account_create_empty_prefix() {
+    User u = {0};
+
+    const char *name = "Bob";
+    const char *prefix = "";
+
+    result_t r = account_create(&u, name, prefix);
+
+    assert_int_equal(r, CORE_ACCOUNT_PREFIX_EMPTY);
+}
+
+static void test_account_create_invalid_prefix() {
+    User u = {0};
+
+    const char *name = "Bob";
+    const char *prefix = "bob$$";
+
+    result_t r = account_create(&u, name, prefix);
+
+    assert_int_equal(r, CORE_ACCOUNT_USERNAME_UNSUPPORTED_SYMBOL);
+}
+
 int main(void) {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test(test_account_create_valid),
-        cmocka_unit_test(test_account_create_name_too_long)
+        cmocka_unit_test(test_account_create_name_too_long),
+        cmocka_unit_test(test_account_create_empty_name),
+        cmocka_unit_test(test_account_create_prefix_too_long),
+        cmocka_unit_test(test_account_create_empty_prefix),
+        cmocka_unit_test(test_account_create_invalid_prefix)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
