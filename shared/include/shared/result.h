@@ -10,6 +10,7 @@ typedef enum {
     CORE_ACCOUNT_CREATE_FAILED,
     CORE_ACCOUNT_IMPORT_FAILED,
     CORE_ACCOUNT_NAME_TOO_LONG,
+    CORE_ACCOUNT_NAME_EMPTY,
     CORE_ACCOUNT_PREFIX_TOO_LONG,
     CORE_ACCOUNT_PREFIX_EMPTY,
     CORE_ACCOUNT_FORGED,
@@ -38,6 +39,8 @@ static inline const char* result_to_string(result_t err) {
             return "CORE.Account: Failed to import account";
         case CORE_ACCOUNT_NAME_TOO_LONG:
             return "CORE.Account: Given name is too long";
+        case CORE_ACCOUNT_NAME_EMPTY:
+            return "CORE.Account: Given an empty name";
         case CORE_ACCOUNT_PREFIX_TOO_LONG:
             return "CORE.Account: Given prefix is too long";
         case CORE_ACCOUNT_PREFIX_EMPTY:
