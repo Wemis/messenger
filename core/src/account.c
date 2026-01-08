@@ -6,17 +6,34 @@
 #include "shared/base58.h"
 
 result_t account_create(User *u, const char *name, const char *username_prefix) {
-    if (strlen(name) > 64) {
+    size_t name_len = strlen(name);
+    size_t prefix_len = strlen(username_prefix);
+    if (name_len > account_NAMEBYTES) {
         return CORE_ACCOUNT_NAME_TOO_LONG;
     }
-    if (strlen(username_prefix) > 16) {
+    if (name_len == 0) {
+        return CORE_ACCOUNT_NAME_TOO_LONG;
+    }
+    if (prefix_len > PREFIX_MAX_LEN) {
         return CORE_ACCOUNT_PREFIX_TOO_LONG;
+    }
+    if (prefix_len == 0) {
+        return CORE_ACCOUNT_PREFIX_EMPTY;
+    }
+
+    const char permitted_symbols[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
+
+    // Check symbols
+    for (size_t i = 0; i < prefix_len; i++) {
+        if (strchr(permitted_symbols, username_prefix[i]) == NULL) {
+            return CORE_ACCOUNT_USERNAME_UNSUPPORTED_SYMBOL;
+        }
     }
 
     if (identity_generate(u->master_key, u->sk_signature, u->pk_signature, u->sk_encryption, u->pk_encryption) != OK) {
         return CORE_ACCOUNT_CREATE_FAILED;
     }
-    memcpy(u->name, name, strlen(name));
+    memcpy(u->name, name, name_len);
 
     // Building User ID: hash(pk_encryption + pk_signature)
     uint8_t temp[identity_encr_PUBLICKEYBYTES + identity_sign_PUBLICKEYBYTES];
@@ -26,47 +43,46 @@ result_t account_create(User *u, const char *name, const char *username_prefix) 
     cryptohash(u->user_id, temp, identity_encr_PUBLICKEYBYTES + identity_sign_PUBLICKEYBYTES);
 
     // Building Username
-    uint8_t temp2[32];
-    size_t prefix_len = strlen(username_prefix);
+    uint8_t temp2[USERNAME_MAX_LEN];
     memcpy(temp2, username_prefix, prefix_len); // Copying username prefix before '#' symbol
 
     temp2[prefix_len] = '#'; // The '#' symbol
-    memcpy(temp2 + prefix_len + 1, u->user_id, 8); // Copying first 8 bytes of user_id
+    memcpy(temp2 + prefix_len + 1, u->user_id, SECURITY_TAG_DATA_LEN); // Copying first 8 bytes of user_id
 
     uint8_t checksum[hash_BYTES];
-    cryptohash(checksum, temp2, prefix_len + 1 + 8);
-    memcpy(temp2 + prefix_len + 1 + 8, checksum, 2); // Adding first 2 bytes of hash of username
+    cryptohash(checksum, temp2, prefix_len + 1 + SECURITY_TAG_DATA_LEN);
+    memcpy(temp2 + prefix_len + 1 + SECURITY_TAG_DATA_LEN, checksum, SECURITY_TAG_CHECK_LEN); // Adding first 2 bytes of hash of username
 
-    uint8_t security_tag[10];
-    memcpy(security_tag, temp2 + prefix_len + 1, 10);
+    uint8_t security_tag[SECURITY_TAG_BIN_LEN];
+    memcpy(security_tag, temp2 + prefix_len + 1, SECURITY_TAG_BIN_LEN);
 
     char security_tag_b58[16];
-    size_t b58len = 16;
-    if (b58enc(security_tag_b58, &b58len, security_tag, 10) == false) { // Encoding security tag in base58
+    size_t b58len = 0;
+    if (b58enc(security_tag_b58, &b58len, security_tag, SECURITY_TAG_BIN_LEN) == false) { // Encoding security tag in base58
         memset(u, 0, sizeof(User));
         return ENCODING_BASE58_ERR;
     }
 
     memcpy(u->username, temp2, prefix_len + 1);
-    memcpy(u->username + prefix_len + 1, security_tag_b58, strlen(security_tag_b58));
+    memcpy(u->username + prefix_len + 1, security_tag_b58, b58len);
 
-    u->username[prefix_len + 1 + strlen(security_tag_b58)] = '\0';
+    u->username[prefix_len + 1 + b58len] = '\0';
 
     // Singing identity
     uint8_t buffer[512] = {0};
     uint8_t hash[signature_BYTES];
     int offest = 0;
 
-    memcpy(buffer, u->user_id, 32);
-    offest += 32;
-    memcpy(buffer + offest, u->pk_encryption, crypto_box_PUBLICKEYBYTES);
-    offest += crypto_box_PUBLICKEYBYTES;
-    memcpy(buffer + offest, u->pk_signature, crypto_sign_PUBLICKEYBYTES);
-    offest += crypto_sign_PUBLICKEYBYTES;
+    memcpy(buffer, u->user_id, account_USERIDBYTES);
+    offest += account_USERIDBYTES;
+    memcpy(buffer + offest, u->pk_encryption, identity_encr_PUBLICKEYBYTES);
+    offest += identity_encr_PUBLICKEYBYTES;
+    memcpy(buffer + offest, u->pk_signature, identity_sign_PUBLICKEYBYTES);
+    offest += identity_sign_PUBLICKEYBYTES;
     memcpy(buffer + offest, u->username, strlen(u->username));
     offest += strlen(u->username);
-    memcpy(buffer + offest, name, strlen(name));
-    offest += strlen(name);
+    memcpy(buffer + offest, name, name_len);
+    offest += name_len;
 
     cryptohash(hash, buffer, offest);
     cryptosign(u->signature, hash, hash_BYTES, u->sk_signature);
@@ -83,7 +99,31 @@ result_t account_import(User *u, const uint8_t master_key[32]) {
     const char *name = "Danylo";
     const char *username_prefix = "danylo";
 
-    memcpy(u->name, name, strlen(name));
+    size_t name_len = strlen(name);
+    size_t prefix_len = strlen(username_prefix);
+    if (name_len > account_NAMEBYTES) {
+        return CORE_ACCOUNT_NAME_TOO_LONG;
+    }
+    if (name_len == 0) {
+        return CORE_ACCOUNT_NAME_TOO_LONG;
+    }
+    if (prefix_len > PREFIX_MAX_LEN) {
+        return CORE_ACCOUNT_PREFIX_TOO_LONG;
+    }
+    if (prefix_len == 0) {
+        return CORE_ACCOUNT_PREFIX_EMPTY;
+    }
+
+    const char permitted_symbols[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
+
+    // Check symbols
+    for (size_t i = 0; i < prefix_len; i++) {
+        if (strchr(permitted_symbols, username_prefix[i]) == NULL) {
+            return CORE_ACCOUNT_USERNAME_UNSUPPORTED_SYMBOL;
+        }
+    }
+
+    memcpy(u->name, name, name_len);
 
     // Building User ID: hash(pk_encryption + pk_signature)
     uint8_t temp[identity_encr_PUBLICKEYBYTES + identity_sign_PUBLICKEYBYTES];
@@ -93,46 +133,46 @@ result_t account_import(User *u, const uint8_t master_key[32]) {
     cryptohash(u->user_id, temp, identity_encr_PUBLICKEYBYTES + identity_sign_PUBLICKEYBYTES);
 
     // Building Username
-    uint8_t temp2[32];
-    size_t prefix_len = strlen(username_prefix);
+    uint8_t temp2[USERNAME_MAX_LEN];
     memcpy(temp2, username_prefix, prefix_len); // Copying username prefix before '#' symbol
 
     temp2[prefix_len] = '#'; // The '#' symbol
-    memcpy(temp2 + prefix_len + 1, u->user_id, 8); // Copying first 8 bytes of user_id
+    memcpy(temp2 + prefix_len + 1, u->user_id, SECURITY_TAG_DATA_LEN); // Copying first 8 bytes of user_id
 
     uint8_t checksum[hash_BYTES];
-    cryptohash(checksum, temp2, prefix_len + 1 + 8);
-    memcpy(temp2 + prefix_len + 1 + 8, checksum, 2); // Adding first 2 bytes of hash of username
+    cryptohash(checksum, temp2, prefix_len + 1 + SECURITY_TAG_DATA_LEN);
+    memcpy(temp2 + prefix_len + 1 + SECURITY_TAG_DATA_LEN, checksum, SECURITY_TAG_CHECK_LEN); // Adding first 2 bytes of hash of username
 
-    uint8_t security_tag[10];
-    memcpy(security_tag, temp2 + prefix_len + 1, 10);
+    uint8_t security_tag[SECURITY_TAG_BIN_LEN];
+    memcpy(security_tag, temp2 + prefix_len + 1, SECURITY_TAG_BIN_LEN);
 
     char security_tag_b58[16];
-    size_t b58len = 16;
-    if (b58enc(security_tag_b58, &b58len, security_tag, 10) == false) { // Encoding security tag in base58
+    size_t b58len = 0;
+    if (b58enc(security_tag_b58, &b58len, security_tag, SECURITY_TAG_BIN_LEN) == false) { // Encoding security tag in base58
+        memset(u, 0, sizeof(User));
         return ENCODING_BASE58_ERR;
     }
 
     memcpy(u->username, temp2, prefix_len + 1);
-    memcpy(u->username + prefix_len + 1, security_tag_b58, strlen(security_tag_b58));
+    memcpy(u->username + prefix_len + 1, security_tag_b58, b58len);
 
-    u->username[prefix_len + 1 + strlen(security_tag_b58)] = '\0';
+    u->username[prefix_len + 1 + b58len] = '\0';
 
     // Singing identity
     uint8_t buffer[512] = {0};
     uint8_t hash[signature_BYTES];
     int offest = 0;
 
-    memcpy(buffer, u->user_id, 32);
-    offest += 32;
-    memcpy(buffer + offest, u->pk_encryption, crypto_box_PUBLICKEYBYTES);
-    offest += crypto_box_PUBLICKEYBYTES;
-    memcpy(buffer + offest, u->pk_signature, crypto_sign_PUBLICKEYBYTES);
-    offest += crypto_sign_PUBLICKEYBYTES;
+    memcpy(buffer, u->user_id, account_USERIDBYTES);
+    offest += account_USERIDBYTES;
+    memcpy(buffer + offest, u->pk_encryption, identity_encr_PUBLICKEYBYTES);
+    offest += identity_encr_PUBLICKEYBYTES;
+    memcpy(buffer + offest, u->pk_signature, identity_sign_PUBLICKEYBYTES);
+    offest += identity_sign_PUBLICKEYBYTES;
     memcpy(buffer + offest, u->username, strlen(u->username));
     offest += strlen(u->username);
-    memcpy(buffer + offest, name, strlen(name));
-    offest += strlen(name);
+    memcpy(buffer + offest, name, name_len);
+    offest += name_len;
 
     cryptohash(hash, buffer, offest);
     cryptosign(u->signature, hash, hash_BYTES, u->sk_signature);
