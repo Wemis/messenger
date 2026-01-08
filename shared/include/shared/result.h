@@ -33,11 +33,17 @@ static inline const char* result_to_string(result_t err) {
         case ENCODING_BASE58_ERR:
             return "SHARED.Base58: Encoding base58 failed";
         case CORE_ACCOUNT_CREATE_FAILED:
+            return "CORE.Account: Failed to create account";
         case CORE_ACCOUNT_IMPORT_FAILED:
+            return "CORE.Account: Failed to import account";
         case CORE_ACCOUNT_NAME_TOO_LONG:
+            return "CORE.Account: Given name is too long";
         case CORE_ACCOUNT_PREFIX_TOO_LONG:
+            return "CORE.Account: Given prefix is too long";
         case CORE_ACCOUNT_PREFIX_EMPTY:
+            return "CORE.Account: Prefix is empty";
         case CORE_ACCOUNT_FORGED:
+            return "CORE.Account: Account is forged";
         case CORE_ACCOUNT_USERNAME_FORGED:
             return "CORE.Account: username is not authentic";
         case CORE_ACCOUNT_USERNAME_CORRUPTED:
