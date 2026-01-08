@@ -12,7 +12,7 @@ result_t account_create(User *u, const char *name, const char *username_prefix) 
         return CORE_ACCOUNT_NAME_TOO_LONG;
     }
     if (name_len == 0) {
-        return CORE_ACCOUNT_NAME_TOO_LONG;
+        return CORE_ACCOUNT_NAME_EMPTY;
     }
     if (prefix_len > PREFIX_MAX_LEN) {
         return CORE_ACCOUNT_PREFIX_TOO_LONG;
@@ -105,7 +105,7 @@ result_t account_import(User *u, const uint8_t master_key[32]) {
         return CORE_ACCOUNT_NAME_TOO_LONG;
     }
     if (name_len == 0) {
-        return CORE_ACCOUNT_NAME_TOO_LONG;
+        return CORE_ACCOUNT_NAME_EMPTY;
     }
     if (prefix_len > PREFIX_MAX_LEN) {
         return CORE_ACCOUNT_PREFIX_TOO_LONG;
