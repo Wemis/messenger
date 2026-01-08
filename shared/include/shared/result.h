@@ -12,7 +12,7 @@ typedef enum {
     CORE_ACCOUNT_NAME_TOO_LONG,
     CORE_ACCOUNT_PREFIX_TOO_LONG,
     CORE_ACCOUNT_PREFIX_EMPTY,
-    CORE_ACCOUNT_INVALID,
+    CORE_ACCOUNT_FORGED,
     CORE_ACCOUNT_USERNAME_FORGED,
     CORE_ACCOUNT_USERNAME_CORRUPTED,
     CORE_ACCOUNT_USERNAME_INVALID_SIZE,
@@ -37,7 +37,7 @@ static inline const char* result_to_string(result_t err) {
         case CORE_ACCOUNT_NAME_TOO_LONG:
         case CORE_ACCOUNT_PREFIX_TOO_LONG:
         case CORE_ACCOUNT_PREFIX_EMPTY:
-        case CORE_ACCOUNT_INVALID:
+        case CORE_ACCOUNT_FORGED:
         case CORE_ACCOUNT_USERNAME_FORGED:
             return "CORE.Account: username is not authentic";
         case CORE_ACCOUNT_USERNAME_CORRUPTED:
