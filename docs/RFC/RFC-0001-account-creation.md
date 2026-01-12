@@ -102,5 +102,5 @@ This RFC introduces the following dependencies:
 - `crypto` -> libsodium
 
 ## 11. References
-- [RFC 0002 Username Derivation Scheme](RFC-0002-username-derivation-scheme)
+- [RFC 0002 Username Derivation Scheme](RFC-0002-username-derivation-scheme.md)
 - [libsodium documentation](https://doc.libsodium.org/doc/quickstart)
