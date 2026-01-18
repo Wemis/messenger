@@ -20,6 +20,9 @@ typedef enum {
     CORE_ACCOUNT_USERNAME_INVALID_CHECKSUM,
     CORE_ACCOUNT_USERNAME_UNSUPPORTED_SYMBOL,
 
+    CORE_DEVICE_IMPORT_FAILED,
+    CORE_DEVICE_IDENTITY_IMPORT_FAILED,
+
     // Crypto
     CRYPTO_ERR,
     CRYPTO_INVALID_SIGNATURE,
@@ -57,6 +60,11 @@ static inline const char* result_to_string(result_t err) {
             return "CORE.Account: invalid username checksum";
         case CORE_ACCOUNT_USERNAME_UNSUPPORTED_SYMBOL:
             return "CORE.Account: username contains unsupported symbol";
+
+        case CORE_DEVICE_IMPORT_FAILED:
+            return "CORE.Device: failed to import device";
+        case CORE_DEVICE_IDENTITY_IMPORT_FAILED:
+            return "CORE.Device: failed to import identity from a master key";
 
         // Crypto
         case CRYPTO_ERR:
