@@ -2,6 +2,8 @@ add_library(messenger_crypto
     src/identity.c
     src/hash.c
     src/sign.c
+    src/key_derivation.c
+    src/random.c
 )
 
 target_include_directories(messenger_crypto
