@@ -22,6 +22,7 @@ typedef enum {
 
     CORE_DEVICE_IMPORT_FAILED,
     CORE_DEVICE_IDENTITY_IMPORT_FAILED,
+    CORE_DEVICE_IDENTITY_FORGED,
 
     // Crypto
     CRYPTO_ERR,
@@ -65,6 +66,8 @@ static inline const char* result_to_string(result_t err) {
             return "CORE.Device: failed to import device";
         case CORE_DEVICE_IDENTITY_IMPORT_FAILED:
             return "CORE.Device: failed to import identity from a master key";
+        case CORE_DEVICE_IDENTITY_FORGED:
+            return "CORE.Device: device identity is forged";
 
         // Crypto
         case CRYPTO_ERR:
