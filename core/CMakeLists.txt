@@ -1,5 +1,6 @@
 add_library(messenger_core
     src/account.c
+    src/device.c
 )
 
 target_include_directories(messenger_core

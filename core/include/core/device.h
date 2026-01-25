@@ -21,4 +21,10 @@ typedef struct {
     uint8_t keys_signature[signature_BYTES];
 } Device;
 
-result_t new_device(Device *d, const uint8_t master_key[identity_MASTERKEYBYTES]);
+result_t new_device(Device *d, const uint8_t master_key[identity_MASTERKEYBYTES], const char *name);
+result_t verify_device_identity(
+    const uint8_t pk_signature[identity_sign_PUBLICKEYBYTES],
+    const uint8_t pk_encryption[identity_encr_PUBLICKEYBYTES],
+    const uint8_t signature[signature_BYTES],
+    const uint8_t account_pk[identity_sign_PUBLICKEYBYTES]
+);
