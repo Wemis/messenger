@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shared/result.h"
+
 enum {
     PROTOCOL_CURRENT_VERSION = 1
 };
@@ -28,11 +30,15 @@ typedef struct {
         proto_session_state_t state,
         void *user_ctx
     );
+    void (*on_error)(
+        result_t err,
+        void *user_ctx
+    );
 } proto_callbacks_t;
 
 proto_session_t *protocol_session_create(const proto_role_t role,
                                          const proto_callbacks_t cb,
                                          void *user_ctx);
-void protocol_session_start(proto_session_t *session);
-void protocol_session_close(proto_session_t *session);
-void protocol_session_destroy(proto_session_t *session);
+result_t protocol_session_start(proto_session_t *session);
+result_t protocol_session_close(proto_session_t *session);
+result_t protocol_session_destroy(proto_session_t *session);

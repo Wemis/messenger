@@ -7,6 +7,7 @@
 // Internal session states, not visible for everyone
 typedef enum {
     PS_INIT,
+    PS_WAIT_HELLO,
     PS_WAIT_HELLO_ACK,
     PS_READY,
     PS_ERROR

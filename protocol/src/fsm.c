@@ -14,7 +14,8 @@ const proto_fsm_transitions_t client_fsm[] = {
 
 // Server FSM transitions table
 const proto_fsm_transitions_t server_fsm[] = {
-    {PS_INIT, EV_RECV_HELLO, protocol_send_hello_ack, PS_READY},
+    {PS_INIT, EV_START, NULL, PS_WAIT_HELLO},
+    {PS_WAIT_HELLO, EV_RECV_HELLO, protocol_send_hello_ack, PS_READY},
 
     {PS_READY, EV_FATAL_ERROR, session_close, PS_ERROR}
 };
@@ -32,13 +33,29 @@ void protocol_fsm_update_state(proto_session_t *session, proto_internal_state_t 
                 session->pstate = PROTO_SESSION_CONNECTING;
                 session->cb.on_state_changed(session->pstate, session->user_ctx);
             }
+            break;
         case PS_READY:
             if (session->pstate != PROTO_SESSION_READY) {
                 session->pstate = PROTO_SESSION_READY;
                 session->cb.on_state_changed(session->pstate, session->user_ctx);
             }
+            break;
         case PS_ERROR:
             session->pstate = PROTO_SESSION_ERROR;
             session->cb.on_state_changed(session->pstate, session->user_ctx);
+            break;
     }
+}
+
+static const proto_fsm_transitions_t *fsm_find_transition(
+    const proto_fsm_transitions_t *table, size_t table_len,
+    proto_internal_state_t state, proto_event_t event
+){
+    for (size_t i = 0; i < table_len; i++) {
+        if (table[i].state == state && table[i].event == event) {
+            return &table[i];
+        }
+    }
+
+    return NULL;
 }

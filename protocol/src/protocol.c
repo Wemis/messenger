@@ -3,12 +3,14 @@
 #include "protocol/protocol.h"
 #include "internal/protocol.h"
 #include "internal/fsm.h"
+#include "shared/result.h"
 
 proto_session_t *protocol_session_create(const proto_role_t role,
                                          const proto_callbacks_t cb,
                                          void *user_ctx) {
     proto_session_t *session = malloc(sizeof(struct proto_session));
-    if (!session || !user_ctx) return NULL;
+    if (!session || !user_ctx ||
+        !cb.on_state_changed || !cb.on_error) return NULL;
 
     *session = (proto_session_t){
         .role = role,
@@ -25,15 +27,19 @@ proto_session_t *protocol_session_create(const proto_role_t role,
     return session;
 }
 
-void protocol_session_start(proto_session_t *session) {
-    //
+result_t protocol_session_start(proto_session_t *session) {
+    if (!session || !session->cb.on_state_changed ||
+        !session->user_ctx || !session->fsm_table)
+        return INVALID_ARGUMENT;
+
+    return OK;
 }
 
-void protocol_session_close(proto_session_t *session) {
+result_t protocol_session_close(proto_session_t *session) {
     session_close(session, NULL);
 }
 
-void protocol_session_destroy(proto_session_t *session) {
+result_t protocol_session_destroy(proto_session_t *session) {
     free(session);
 }
 

@@ -1,10 +1,12 @@
 #pragma once
 
 typedef enum {
-    OK = 0,
+    OK,
 
     // Shared
     ENCODING_BASE58_ERR,
+    INVALID_ARGUMENT,
+    PROTOCOL_VIOLATION,
 
     // Core
     CORE_ACCOUNT_CREATE_FAILED,
@@ -74,6 +76,11 @@ static inline const char* result_to_string(result_t err) {
         case CRYPTO_INVALID_SIGNATURE:
         case CRYPTO_AUTH_FAILED:
             return "CRYPTO: authentication failed";
+
+        case INVALID_ARGUMENT:
+            return "Given argument is invalid";
+        case PROTOCOL_VIOLATION:
+            return "Protocol violation";
     }
 
     return "Unknown error";

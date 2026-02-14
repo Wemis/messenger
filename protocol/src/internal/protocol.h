@@ -13,6 +13,11 @@ struct proto_session {
     proto_internal_state_t istate;
 };
 
+// Protocol Internal Errors
+typedef enum {
+    PROTO_OK
+} proto_err_t;
+
 int session_close(proto_session_t *session, const void *event_data);
 
 int protocol_send_hello(proto_session_t *session,
